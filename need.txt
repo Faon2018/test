@@ -1,0 +1,175 @@
+一 需求分析
+1.前台界面
+1）首页
+2）商品详情页面
+3）分类详情页面
+4）购物车页面
+5）前台登录页面
+6）前台注册页面
+7）个人中心
+8）结算页面
+
+2.后台界面
+1）后台登录页面
+2）后台顶部页面
+3）后台左侧页面
+4）后台右侧页面
+
+3.后台功能
+1）后台退出
+2）修改管理口令
+3）会员管理
+4）广告管理
+5）分类管理
+6）品牌管理
+7）商品管理
+8）评论管理
+9）订单状态管理
+10）订单管理
+
+二 数据库设计
+1)users表
+id int
+username varchar
+psword varchar
+gender char
+regdate date
+email varchar
+admin int
+
+2)advert表
+id int
+img varchar
+pos varchar
+url varchar
+launchdate(投放日期)
+
+3）class表
+id int
+cname varchar
+
+4)brand表
+id int
+bname varchar
+
+
+5)goods表
+id int
+img varchar
+gname varchar
+inventory int
+price double
+shelf
+brand_id int
+class_id int
+
+6)comments评论
+id int
+content varchar
+commentdate date
+user_id
+goods_id
+
+7)statu
+id int
+state varchar
+goods_id(name)
+
+8)indent
+id int
+num int
+itime date
+users_id
+statu_id
+goods_id
+touch_id
+
+9)touch
+id
+addr
+tel
+email
+user_id
+
+CREATE TABLE `user`(
+id INT PRIMARY KEY AUTO_INCREMENT COMMENT '主键自增',
+username VARCHAR(20)  NOT NULL COMMENT '用户名' ,
+pasword VARCHAR(20) NOT NULL COMMENT '密码',
+sex CHAR  CHECK(gender= '男' OR gender= '女') COMMENT '性别',
+regdate DATE  COMMENT '注册日期',
+email VARCHAR(20) COMMENT '邮箱',
+admin INT DEFAULT 0 CHECK(admin=0 OR admin=1 OR admin=2) COMMENT '是否为管理员');
+
+CREATE TABLE advert(
+id INT PRIMARY KEY AUTO_INCREMENT,
+img VARCHAR(20)  NOT NULL,
+pos VARCHAR(20),
+url VARCHAR(20),
+launchdate DATE
+);
+
+CREATE TABLE brand(
+id INT PRIMARY KEY AUTO_INCREMENT,
+bname VARCHAR(20)  NOT NULL,
+bregdate date not null,
+
+);
+
+CREATE TABLE class(
+id INT PRIMARY KEY AUTO_INCREMENT,
+cname VARCHAR(20)  NOT NULL,
+cregdate date not null,
+);
+
+CREATE TABLE goods(
+id INT PRIMARY KEY AUTO_INCREMENT,
+gimg VARCHAR(20)  NOT NULL comment '存储图片URL',
+gname VARCHAR(20)  NOT NULL,
+inventory INT comment '库存',
+price DOUBLE ,
+shelf INT not null DEFAULT 0  comment '是否上架' CHECK(shelf=0 OR shelf=1),
+brand_id INT,
+class_id INT,
+CONSTRAINT brand_goods FOREIGN KEY goods(brand_id) REFERENCES brand(id),
+CONSTRAINT class_goods FOREIGN KEY goods(class_id) REFERENCES class(id)
+);
+
+CREATE TABLE comments(
+id INT PRIMARY KEY AUTO_INCREMENT,
+content VARCHAR(20)  NOT NULL,
+commentdate DATE,
+users_id INT ,
+goods_id INT,
+CONSTRAINT users_comments FOREIGN KEY comments(users_id) REFERENCES users(id),
+CONSTRAINT goods_comments FOREIGN KEY comments(goods_id) REFERENCES goods(id)
+);
+
+CREATE TABLE statu(
+id INT PRIMARY KEY AUTO_INCREMENT,
+state VARCHAR(20)  NOT NULL,
+goods_id INT,
+CONSTRAINT goods_statu FOREIGN KEY statu(goods_id) REFERENCES goods(id)
+);
+
+CREATE TABLE indent(
+id INT PRIMARY KEY AUTO_INCREMENT,
+num INT,
+itime DATE,
+users_id INT,
+statu_id INT,
+goods_id INT,
+touch_id INT,
+CONSTRAINT users_indent FOREIGN KEY indent(users_id) REFERENCES users(id),
+CONSTRAINT statu_indent FOREIGN KEY indent(statu_id) REFERENCES statu(id),
+CONSTRAINT goods_indent FOREIGN KEY indent(goods_id) REFERENCES goods(id),
+CONSTRAINT touch_indent FOREIGN KEY indent(touch_id) REFERENCES touch(id)
+);
+
+CREATE TABLE touch(
+id INT PRIMARY KEY AUTO_INCREMENT,
+addr VARCHAR(20)  NOT NULL,
+tel VARCHAR(20)  NOT NULL,
+email VARCHAR(20)  NOT NULL,
+users_id INT,
+CONSTRAINT users_touch FOREIGN KEY touch(users_id) REFERENCES users(id)
+);
